@@ -14,5 +14,15 @@ data = pd.read_csv("data/train.tsv", sep="\t", names=columns)
 # Now select only needed columns
 data = data[["label", "statement"]]
 
+#convert labels to binary
+def convert_label(x):
+    if x in ["true","mostly-true"]:
+        return 1
+    else:
+        return 0
+    
+#convert entire column
+data["label"] = data["label"].apply(convert_label)
+
 # Display
 print(data.head())
