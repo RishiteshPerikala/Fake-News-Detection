@@ -1,4 +1,10 @@
 import pandas as pd
+import nltk
+import string
+from nltk.corpus import stopwords
+
+#download stopwords
+nltk.download('stopwords')
 
 # Define column names (IMPORTANT)
 columns = [
