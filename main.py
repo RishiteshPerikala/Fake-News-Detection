@@ -47,3 +47,16 @@ data["statement"] = data["statement"].apply(preprocess)
 
 # Display
 print(data.head())
+
+from sklearn.feature_extraction.text import TfidfVectorizer
+
+# Convert text to TF-IDF features
+vectorizer = TfidfVectorizer(max_features=5000)
+
+X = vectorizer.fit_transform(data["statement"]).toarray()   #convert text to numbers
+
+y = data["label"]   #assigning y as labels i.e 0 or 1
+
+#print shape
+print("Feature shape:",X.shape)
+print("Labels.shape:",y.shape)
