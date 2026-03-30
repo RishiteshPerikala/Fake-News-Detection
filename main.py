@@ -30,5 +30,20 @@ def convert_label(x):
 #convert entire column
 data["label"] = data["label"].apply(convert_label)
 
+#load stopwords
+stop_words = set(stopwords.words('english'))
+
+#Preprocessing function
+def preprocess(text):
+    text = text.lower()  # lowercase text
+    text = text.translate(str.maketrans('','',string.punctuation))  #remove punctuations
+    words = text.split()    #split into words(tokenization)
+    words = [word for word in words if word not in stop_words]  # remove stopwords
+
+    return " ".join(words)
+
+#apply preprocess
+data["statement"] = data["statement"].apply(preprocess)
+
 # Display
 print(data.head())
