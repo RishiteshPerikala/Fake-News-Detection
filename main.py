@@ -95,3 +95,29 @@ print("Accuracy: ",accuracy)
 
 cm = confusion_matrix(y_test,y_pred)    #confusion matrix
 print("Confusion Matrix:\n",cm)
+
+# Applying Fuzzy Logic
+
+# define fuzzy function
+def fuzzy_op(p):
+    if p < 0.2:
+        return "Highly Fake"
+    elif p < 0.4:
+        return "Mostly Fake"
+    elif p < 0.6:
+        return "Uncertain"
+    elif p < 0.8:
+        return "Mostly Real"
+    else:
+        return "Highly Real"
+    
+# calculating probability
+y_prob = model.predict_proba(X_test)    #uses sigmoid to calculate probability
+
+real_prob = y_prob[:,1] # get real news's probability
+
+# get first 10 fuzzy outputs 
+for i in range(10):
+    print("Probability: ",real_prob[i])             # prints probabilities
+    print("Fuzzy o/p: ",fuzzy_op(real_prob[i]))     # prints fuzzy outputs
+    print()
