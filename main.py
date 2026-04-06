@@ -76,7 +76,7 @@ print("y_test:", y_test.shape)
 # Train model
 from sklearn.linear_model import LogisticRegression
 
-model = LogisticRegression()    # created empty model
+model = LogisticRegression(class_weight='balanced')    # created empty model
 model.fit(X_train,y_train)  # trained model
 
 print("Model is trained Successfully!")
