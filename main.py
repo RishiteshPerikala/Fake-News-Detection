@@ -86,3 +86,9 @@ y_pred = model.predict(X_test)  # predicts values as 0's and 1's
 
 print("Predictions: ",y_pred[:10])      # shows first 10 prediction values
 print("Actual: ",y_test[:10].values)   # shows first 10 actual values
+
+# calculate Accuracy
+from sklearn.metrics import accuracy_score
+
+accuracy = accuracy_score(y_test,y_pred)    # comparing both
+print("Accuracy: ",accuracy)
