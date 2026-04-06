@@ -59,4 +59,16 @@ y = data["label"]   #assigning y as labels i.e 0 or 1
 
 #print shape
 print("Feature shape:",X.shape)
-print("Labels.shape:",y.shape)
+print("Labels shape:",y.shape)
+
+#Training & Testing Model
+from sklearn.model_selection import train_test_split
+
+# Split data
+X_train, X_test, y_train, y_test = train_test_split( X, y, test_size=0.2, random_state=57)
+
+# Print shapes
+print("X_train:", X_train.shape)
+print("X_test:", X_test.shape)
+print("y_train:", y_train.shape)
+print("y_test:", y_test.shape)
