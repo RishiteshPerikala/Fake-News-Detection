@@ -80,3 +80,9 @@ model = LogisticRegression()    # created empty model
 model.fit(X_train,y_train)  # trained model
 
 print("Model is trained Successfully!")
+
+# Predict the data
+y_pred = model.predict(X_test)  # predicts values as 0's and 1's
+
+print("Predictions: ",y_pred[:10])      # shows first 10 prediction values
+print("Actual: ",y_test[:10].values)   # shows first 10 actual values
