@@ -121,3 +121,16 @@ for i in range(10):
     print("Probability: ",real_prob[i])             # prints probabilities
     print("Fuzzy o/p: ",fuzzy_op(real_prob[i]))     # prints fuzzy outputs
     print()
+
+# Testing model by entering user input
+inp = input("Enter news: ")
+
+# converting text into scores
+inp_vector = vectorizer.transform([inp]).toarray()
+
+#predicting probability for user input text
+prob = model.predict_proba(inp_vector)[0][1]
+
+# print probability and fuzzy o/p
+print("Probability: ",prob)
+print("Fuzzy Output: ",fuzzy_op(prob))
