@@ -94,7 +94,7 @@ acc_lr = accuracy_score(y_test,y_pred_lr)    # comparing both
 print("Accuracy: ",acc_lr)
 
 cm_lr = confusion_matrix(y_test,y_pred_lr)    #confusion matrix
-print("Confusion Matrix:\n",cm)
+print("Confusion Matrix:\n",cm_lr)
 
 # Applying Fuzzy Logic
 
