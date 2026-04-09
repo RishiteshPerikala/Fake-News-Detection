@@ -76,24 +76,24 @@ print("y_test:", y_test.shape)
 # Train model
 from sklearn.linear_model import LogisticRegression
 
-model = LogisticRegression(class_weight='balanced')    # updated model (treats fake and real equally)
-model.fit(X_train,y_train)  # trained model
+model_lr = LogisticRegression(class_weight='balanced')    # updated model (treats fake and real equally)
+model_lr.fit(X_train,y_train)  # trained model
 
-print("Model is trained Successfully!")
+print("Logistic Regression Model is trained Successfully!")
 
 # Predict the data
-y_pred = model.predict(X_test)  # predicts values as 0's and 1's
+y_pred_lr = model_lr.predict(X_test)  # predicts values as 0's and 1's
 
-print("Predictions: ",y_pred[:10])      # shows first 10 prediction values
+print("Predictions: ",y_pred_lr[:10])      # shows first 10 prediction values
 print("Actual: ",y_test[:10].values)   # shows first 10 actual values
 
 # calculate Accuracy and add Confusion matrix
 from sklearn.metrics import accuracy_score, confusion_matrix
 
-accuracy = accuracy_score(y_test,y_pred)    # comparing both
-print("Accuracy: ",accuracy)
+acc_lr = accuracy_score(y_test,y_pred_lr)    # comparing both
+print("Accuracy: ",acc_lr)
 
-cm = confusion_matrix(y_test,y_pred)    #confusion matrix
+cm_lr = confusion_matrix(y_test,y_pred_lr)    #confusion matrix
 print("Confusion Matrix:\n",cm)
 
 # Applying Fuzzy Logic
@@ -112,16 +112,57 @@ def fuzzy_op(p):
         return "Highly Real"
     
 # calculating probability
-y_prob = model.predict_proba(X_test)    #uses sigmoid to calculate probability
+y_prob_lr = model_lr.predict_proba(X_test)    #uses sigmoid to calculate probability
 
-real_prob = y_prob[:,1] # get real news's probability
+real_prob_lr = y_prob_lr[:,1] # get real news's probability
 
 # get first 10 fuzzy outputs 
 for i in range(10):
-    print("Probability: ",real_prob[i])             # prints probabilities
-    print("Fuzzy o/p: ",fuzzy_op(real_prob[i]))     # prints fuzzy outputs
+    print("Probability: ",real_prob_lr[i])             # prints probabilities
+    print("Fuzzy o/p: ",fuzzy_op(real_prob_lr[i]))     # prints fuzzy outputs
     print()
 
+# Testing model by entering user input
+# inp = input("Enter news: ")
+
+# converting text into scores
+#inp_vector = vectorizer.transform([inp]).toarray()
+
+#predicting probability for user input text
+#prob_lr= model_lr.predict_proba(inp_vector)[0][1]
+
+# print probability and fuzzy o/p
+#print("Probability: ",prob_lr)
+#print("Fuzzy Output: ",fuzzy_op(prob_lr))
+
+#ANN
+from sklearn.neural_network import MLPClassifier
+
+model_ann = MLPClassifier(hidden_layer_sizes=(100,), max_iter=300)
+
+model_ann.fit(X_train, y_train)
+
+print("ANN model trained!")
+
+y_pred_ann = model_ann.predict(X_test)  # predicting values as 0's & 1's 
+
+acc_ann = accuracy_score(y_test, y_pred_ann)    # comparing both 
+print("ANN Accuracy:", acc_ann)
+
+cm_ann = confusion_matrix(y_test,y_pred_ann)    #confusion matrix
+print("Confusion Matrix:\n",cm_ann)
+
+# calculating Probability
+y_prob_ann = model_ann.predict_proba(X_test)    #uses sigmoid to calculate probability
+
+real_prob_ann = y_prob_ann[:, 1]    # get real news's probability
+
+# get first 10 fuzzy outputs
+for i in range(10):
+    print("ANN Probability:", real_prob_ann[i])
+    print("Fuzzy Output:", fuzzy_op(real_prob_ann[i]))
+    print()
+    
 # Testing model by entering user input
 inp = input("Enter news: ")
 
@@ -129,8 +170,8 @@ inp = input("Enter news: ")
 inp_vector = vectorizer.transform([inp]).toarray()
 
 #predicting probability for user input text
-prob = model.predict_proba(inp_vector)[0][1]
+prob_ann= model_ann.predict_proba(inp_vector)[0][1]
 
 # print probability and fuzzy o/p
-print("Probability: ",prob)
-print("Fuzzy Output: ",fuzzy_op(prob))
+print("Probability: ",prob_ann)
+print("Fuzzy Output: ",fuzzy_op(prob_ann))
