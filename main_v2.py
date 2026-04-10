@@ -1,4 +1,5 @@
 import pandas as pd
+import numpy as np
 
 # Column names for LIAR dataset
 columns = ["id", "label", "statement", "subject", "speaker","speaker_job", "state", "party","barely_true", "false", "half_true", "mostly_true", "pants_on_fire", "context"]
@@ -68,5 +69,5 @@ cm_lr = confusion_matrix(y_test, y_pred_lr)
 print("Confusion Matrix:\n", cm_lr)
 
 # Classification report
-print("\nClassification Report:\n")
-print(classification_report(y_test, y_pred_lr))
+cr_lr = classification_report(y_test, y_pred_lr)
+print("\nClassification Report:\n",cr_lr)
