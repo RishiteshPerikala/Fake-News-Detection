@@ -30,7 +30,7 @@ from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.preprocessing import LabelEncoder
 
 # Convert text to numerical features
-vectorizer = TfidfVectorizer(max_features=5000)
+vectorizer = TfidfVectorizer(max_features=500)      # changing 5000 to 500 features
 
 X = vectorizer.fit_transform(data["full_text"]).toarray()
 
@@ -71,3 +71,44 @@ print("Confusion Matrix:\n", cm_lr)
 # Classification report
 cr_lr = classification_report(y_test, y_pred_lr)
 print("\nClassification Report:\n",cr_lr)
+
+# Genetic ALgorithm
+import pygad
+
+# Fitness Calculation
+def fitness_func(ga_instance, solution, solution_idx):
+    # Select features based on chromosome
+    selected_features = np.where(solution == 1)[0]
+
+    # Avoid empty feature set
+    if len(selected_features) == 0:
+        return 0
+
+    # Select only chosen columns
+    X_train_selected = X_train[:, selected_features]
+    X_test_selected = X_test[:, selected_features]
+
+    # Train temporary model
+    temp_model = LogisticRegression(max_iter=300)
+    temp_model.fit(X_train_selected, y_train)
+
+    # Predict
+    y_pred_temp = temp_model.predict(X_test_selected)
+
+    # Return accuracy as fitness
+    return accuracy_score(y_test, y_pred_temp)
+
+num_features = X_train.shape[1]
+
+ga_instance = pygad.GA(num_generations=10, num_parents_mating=4, fitness_func=fitness_func, sol_per_pop=8,
+                        num_genes=num_features, gene_type=int, init_range_low=0, init_range_high=2,mutation_percent_genes=10)
+
+print("Running Genetic Algorithm...")
+ga_instance.run()
+print("GA completed!")
+
+solution, solution_fitness, solution_idx = ga_instance.best_solution()
+print("Best GA Accuracy:", solution_fitness)
+
+selected_features = np.where(solution == 1)[0]
+print("Number of selected features:", len(selected_features))
