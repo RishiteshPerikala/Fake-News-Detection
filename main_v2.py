@@ -54,9 +54,19 @@ model = LogisticRegression(max_iter=500)
 model.fit(X_train, y_train)     # trained model
 
 # Predictions
-y_pred = model.predict(X_test)
+y_pred_lr = model.predict(X_test)
 
 # Accuracy
-accuracy = accuracy_score(y_test, y_pred)
-
+accuracy = accuracy_score(y_test, y_pred_lr)
 print("V2 Accuracy:", accuracy)
+
+# Evaluation
+from sklearn.metrics import confusion_matrix, classification_report
+
+# Confusion matrix
+cm_lr = confusion_matrix(y_test, y_pred_lr)
+print("Confusion Matrix:\n", cm_lr)
+
+# Classification report
+print("\nClassification Report:\n")
+print(classification_report(y_test, y_pred_lr))
