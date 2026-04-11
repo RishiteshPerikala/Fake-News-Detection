@@ -112,3 +112,27 @@ print("Best GA Accuracy:", solution_fitness)
 
 selected_features = np.where(solution == 1)[0]
 print("Number of selected features:", len(selected_features))
+
+# Select optimized features
+X_train_ga = X_train[:, selected_features]
+X_test_ga = X_test[:, selected_features]
+
+# Implementing ANN
+from sklearn.neural_network import MLPClassifier
+
+# Create ANN model
+model_ann = MLPClassifier(hidden_layer_sizes=(100,), max_iter=600, learning_rate_init=0.001, random_state=42)
+
+# Train Model
+print("\nTraining ANN model...")
+model_ann.fit(X_train_ga, y_train)
+print("ANN training completed!")
+
+# Accuracy
+y_pred_ann = model_ann.predict(X_test_ga)
+accuracy_ann = accuracy_score(y_test, y_pred_ann)
+print("ANN Accuracy:", accuracy_ann)
+
+# Metrics
+print("\nANN Confusion Matrix:\n", confusion_matrix(y_test, y_pred_ann))
+print("\nANN Classification Report:\n", classification_report(y_test, y_pred_ann))
