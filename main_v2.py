@@ -100,18 +100,23 @@ def fitness_func(ga_instance, solution, solution_idx):
 
 num_features = X_train.shape[1]
 
-ga_instance = pygad.GA(num_generations=10, num_parents_mating=4, fitness_func=fitness_func, sol_per_pop=8,
-                        num_genes=num_features, gene_type=int, init_range_low=0, init_range_high=2,mutation_percent_genes=10)
+ga_instance = pygad.GA(
+    num_generations=10, num_parents_mating=4, fitness_func=fitness_func, sol_per_pop=8, num_genes=num_features, 
+    gene_type=int,  init_range_low=0, init_range_high=2, mutation_percent_genes=10)
 
-print("Running Genetic Algorithm...")
-ga_instance.run()
-print("GA completed!")
+#print("Running Genetic Algorithm...")
+#ga_instance.run()
+#print("GA completed!")
 
 solution, solution_fitness, solution_idx = ga_instance.best_solution()
 print("Best GA Accuracy:", solution_fitness)
 
 selected_features = np.where(solution == 1)[0]
 print("Number of selected features:", len(selected_features))
+
+np.save("selected_features.npy", selected_features) # save GA
+
+selected_features = np.load("selected_features.npy")
 
 # Select optimized features
 X_train_ga = X_train[:, selected_features]
@@ -121,7 +126,7 @@ X_test_ga = X_test[:, selected_features]
 from sklearn.neural_network import MLPClassifier
 
 # Create ANN model
-model_ann = MLPClassifier(hidden_layer_sizes=(100,), max_iter=600, learning_rate_init=0.001, random_state=42)
+model_ann = MLPClassifier(hidden_layer_sizes=(100,), max_iter=1000, early_stopping=True, random_state=42)
 
 # Train Model
 print("\nTraining ANN model...")
@@ -136,3 +141,43 @@ print("ANN Accuracy:", accuracy_ann)
 # Metrics
 print("\nANN Confusion Matrix:\n", confusion_matrix(y_test, y_pred_ann))
 print("\nANN Classification Report:\n", classification_report(y_test, y_pred_ann))
+
+# LR is better than ANN
+
+# Applying Fuzzy Logic
+
+# define fuzzy function
+def fuzzy_op(p):
+    if p < 0.25:
+        return "Highly Fake"
+    elif p < 0.45:
+        return "Mostly Fake"
+    elif p < 0.55:
+        return "Uncertain"
+    elif p < 0.75:
+        return "Mostly Real"
+    else:
+        return "Highly Real"
+    
+# calculating probability
+y_prob_lr = model.predict_proba(X_test)    #uses sigmoid to calculate probability
+
+# get first 10 fuzzy outputs 
+for i in range(10):
+    prob_lr = np.max(y_prob_lr[i])
+    print("Probability: ",prob_lr)             # prints probabilities
+    print("Fuzzy o/p: ",fuzzy_op(prob_lr))     # prints fuzzy outputs
+    print()
+
+print("\n----- Test Your Own Input -----")
+
+user_input = input("Enter news: ")
+
+# Convert using same vectorizer
+input_vector = vectorizer.transform([user_input]).toarray()
+
+# Predict probability
+prob = np.max(model.predict_proba(input_vector)[0])
+
+print("Probability:", prob)
+print("Fuzzy Output:", fuzzy_op(prob))
