@@ -1,5 +1,6 @@
 import pandas as pd
 import numpy as np
+import matplotlib.pyplot as plt
 
 # Column names for LIAR dataset
 columns = ["id", "label", "statement", "subject", "speaker","speaker_job", "state", "party","barely_true", "false", "half_true", "mostly_true", "pants_on_fire", "context"]
@@ -45,32 +46,42 @@ print("Label shape:", y.shape)
 # Splitting Dataset
 from sklearn.model_selection import train_test_split
 from sklearn.linear_model import LogisticRegression
-from sklearn.metrics import accuracy_score
+from sklearn.metrics import accuracy_score, confusion_matrix, classification_report
 
 # Split data
-X_train, X_test, y_train, y_test = train_test_split( X, y, test_size=0.2, random_state=57)
+X_train, X_test, y_train, y_test = train_test_split( X, y, test_size=0.2, random_state=42)
 
 # Train model
-model = LogisticRegression(max_iter=500)
-model.fit(X_train, y_train)     # trained model
+
+# -------- Original Model --------
+model_original = LogisticRegression(max_iter=500, solver='lbfgs')
+
+model_original.fit(X_train, y_train)
+y_pred_original = model_original.predict(X_test)
+
+print("\n=== ORIGINAL MODEL ===")
+print("Accuracy:", accuracy_score(y_test, y_pred_original))
+print("Confusion Matrix:\n", confusion_matrix(y_test, y_pred_original))
+print("Classification Report:\n", classification_report(y_test, y_pred_original))
+
+# -------- Balanced Model --------
+model = LogisticRegression(max_iter=500, solver='lbfgs', class_weight='balanced')
+
+model.fit(X_train, y_train)
 
 # Predictions
 y_pred_lr = model.predict(X_test)
 
-# Accuracy
-accuracy = accuracy_score(y_test, y_pred_lr)
-print("V2 Accuracy:", accuracy)
-
-# Evaluation
-from sklearn.metrics import confusion_matrix, classification_report
+print("\n=== BALANCED MODEL ===")
+print("Accuracy:",accuracy_score(y_test, y_pred_lr))
+print("Confusion Matrix:\n", confusion_matrix(y_test, y_pred_lr))
+print("Classification Report:\n", classification_report(y_test, y_pred_lr))
 
 # Confusion matrix
 cm_lr = confusion_matrix(y_test, y_pred_lr)
-print("Confusion Matrix:\n", cm_lr)
 
 # Classification report
 cr_lr = classification_report(y_test, y_pred_lr)
-print("\nClassification Report:\n",cr_lr)
 
 # Genetic ALgorithm
 import pygad
@@ -142,6 +153,74 @@ print("ANN Accuracy:", accuracy_ann)
 print("\nANN Confusion Matrix:\n", confusion_matrix(y_test, y_pred_ann))
 print("\nANN Classification Report:\n", classification_report(y_test, y_pred_ann))
 
+# Comparing LR and ANN using Plot
+#1
+acc_lr = accuracy_score(y_test, y_pred_lr)
+acc_ann = accuracy_score(y_test, y_pred_ann)
+
+models = ['Balanced LR', 'ANN']
+accuracies = [acc_lr, acc_ann]
+
+plt.figure()
+plt.bar(models, accuracies)
+plt.title("Accuracy Comparison: LR vs ANN")
+plt.xlabel("Models")
+plt.ylabel("Accuracy")
+plt.show()
+
+#2
+from sklearn.metrics import precision_score, recall_score, f1_score
+
+# LR scores
+prec_lr = precision_score(y_test, y_pred_lr, average='macro')
+rec_lr = recall_score(y_test, y_pred_lr, average='macro')
+f1_lr = f1_score(y_test, y_pred_lr, average='macro')
+
+# ANN scores
+prec_ann = precision_score(y_test, y_pred_ann, average='macro')
+rec_ann = recall_score(y_test, y_pred_ann, average='macro')
+f1_ann = f1_score(y_test, y_pred_ann, average='macro')
+
+labels = ['Precision', 'Recall', 'F1-score']
+
+lr_scores = [prec_lr, rec_lr, f1_lr]
+ann_scores = [prec_ann, rec_ann, f1_ann]
+
+x = range(len(labels))
+
+plt.figure()
+plt.plot(x, lr_scores, marker='o', label='Balanced LR')
+plt.plot(x, ann_scores, marker='o', label='ANN')
+
+plt.xticks(x, labels)
+plt.title("Macro Metrics Comparison: LR vs ANN")
+plt.xlabel("Metrics")
+plt.ylabel("Score")
+plt.legend()
+plt.show()
+
+#3
+
+def plot_cm(cm, title):
+    plt.figure()
+    plt.imshow(cm)
+    plt.title(title)
+    plt.colorbar()
+    
+    ticks = np.arange(len(cm))
+    plt.xticks(ticks)
+    plt.yticks(ticks)
+    
+    plt.xlabel("Predicted")
+    plt.ylabel("Actual")
+    plt.show()
+
+# LR
+plot_cm(confusion_matrix(y_test, y_pred_lr), "Balanced LR Confusion Matrix")
+
+# ANN
+plot_cm(confusion_matrix(y_test, y_pred_ann), "ANN Confusion Matrix")
+
 # LR is better than ANN
 
 # Applying Fuzzy Logic
@@ -163,21 +242,21 @@ def fuzzy_op(p):
 y_prob_lr = model.predict_proba(X_test)    #uses sigmoid to calculate probability
 
 # get first 10 fuzzy outputs 
-for i in range(10):
-    prob_lr = np.max(y_prob_lr[i])
-    print("Probability: ",prob_lr)             # prints probabilities
-    print("Fuzzy o/p: ",fuzzy_op(prob_lr))     # prints fuzzy outputs
-    print()
+#for i in range(10):
+#    prob_lr = np.max(y_prob_lr[i])
+#    print("Probability: ",prob_lr)             # prints probabilities
+#    print("Fuzzy o/p: ",fuzzy_op(prob_lr))     # prints fuzzy outputs
+#   print()
+#
+#print("\n----- Test Your Own Input -----")
 
-print("\n----- Test Your Own Input -----")
-
-user_input = input("Enter news: ")
+#user_input = input("Enter news: ")
 
 # Convert using same vectorizer
-input_vector = vectorizer.transform([user_input]).toarray()
+#input_vector = vectorizer.transform([user_input]).toarray()
 
 # Predict probability
-prob = np.max(model.predict_proba(input_vector)[0])
+#prob = np.max(model.predict_proba(input_vector)[0])
 
-print("Probability:", prob)
-print("Fuzzy Output:", fuzzy_op(prob))
+#print("Probability:", prob)
+#print("Fuzzy Output:", fuzzy_op(prob))
