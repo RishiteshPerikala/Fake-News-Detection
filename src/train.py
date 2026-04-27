@@ -13,7 +13,7 @@ from sklearn.metrics import accuracy_score, confusion_matrix, classification_rep
 data = load_and_preprocess("../data/train.tsv")
 
 # 2. TF-IDF Vectorization
-vectorizer = TfidfVectorizer(max_features=500)
+vectorizer = TfidfVectorizer(max_features=2000, ngram_range=(1,2))      #increased from 500 to 2000 and added n-grams
 X = vectorizer.fit_transform(data["full_text"])
 
 # 3. Label Encoding
