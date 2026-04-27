@@ -1,4 +1,5 @@
 import joblib
+import numpy as np
 
 from preprocess import load_and_preprocess
 
@@ -22,6 +23,15 @@ y = encoder.fit_transform(data["label"])
 
 # 4. Train-Test Split
 X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+
+# using GA
+use_ga = True  # toggle this
+
+if use_ga:
+    selected_features = np.load("../artifacts/selected_features.npy")
+    X_train = X_train[:, selected_features]
+    X_test = X_test[:, selected_features]
+    print(f"Using GA features: {len(selected_features)}")
 
 # 5. Train Logistic Regression (Balanced)
 model = LogisticRegression(max_iter=500, class_weight='balanced')
