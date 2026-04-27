@@ -1,9 +1,24 @@
 import pandas as pd
 
-def load_and_preprocess(file_path):
-    
-    #Loads LIAR dataset and performs preprocessing.Returns cleaned dataframe with 'label' and 'full_text'.
+def map_labels(label):
 
+    """
+    Convert 6 LIAR labels into 3 classes:
+    Fake, Uncertain, Real
+    """
+     
+    if label in ["pants-fire", "false"]:
+        return "Fake"
+    elif label in ["barely-true", "half-true"]:
+        return "Uncertain"
+    else:
+        return "Real"
+
+def load_and_preprocess(file_path):
+    """
+    Loads LIAR dataset and performs preprocessing.
+    Returns cleaned dataframe with 'label' and 'full_text'.
+    """
     # Column names for LIAR dataset
     columns = [
         "id", "label", "statement", "subject", "speaker",
@@ -35,12 +50,19 @@ def load_and_preprocess(file_path):
         data["context"]
     )
 
+    data["label"] = data["label"].apply(map_labels)
+
     # Keep only required columns
     data = data[["label", "full_text"]]
 
     return data
 
+#test individually
 if __name__ == "__main__":
     df = load_and_preprocess("../data/train.tsv")
     print(df.head())
+
+    print("\nClass Distribution:")
+    print(df["label"].value_counts())
+
     print("\nData shape:", df.shape)
