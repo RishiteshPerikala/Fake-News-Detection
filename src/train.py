@@ -25,7 +25,7 @@ y = encoder.fit_transform(data["label"])
 X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
 
 # using GA
-use_ga = True  # toggle this
+use_ga = False  # toggle this
 
 if use_ga:
     selected_features = np.load("../artifacts/selected_features.npy")
